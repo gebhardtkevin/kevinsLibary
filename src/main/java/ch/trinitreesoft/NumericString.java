@@ -32,7 +32,7 @@ public class NumericString {
                         "(((" + Digits + "(\\.)?(" + Digits + "?)(" + Exp + ")?)|" +
 
                         // . Digits ExponentPart_opt FloatTypeSuffix_opt
-                        "(\\.(" + Digits + ")(" + Exp + ")?)|" +
+                        "(\\." + Digits + "(" + Exp + ")?)|" +
 
                         // Hexadecimal strings
                         "((" +
@@ -66,6 +66,22 @@ public class NumericString {
 
     public static int parseAsInt(String string) {
         return Integer.parseInt(string.strip());
+    }
+
+    public static double parseAsHex(String hex) {
+        if (hex.substring(0, 2).matches("0[xX]")) {
+            hex = hex.substring(2);
+        }
+        long longHex = parseUnsignedHex(hex);
+        return Double.longBitsToDouble(longHex);
+    }
+
+    private static long parseUnsignedHex(String text) {
+        if (text.length() == 16) {
+            return (parseUnsignedHex(text.substring(0, 1)) << 60)
+                    | parseUnsignedHex(text.substring(1));
+        }
+        return Long.parseLong(text, 16);
     }
 }
 
